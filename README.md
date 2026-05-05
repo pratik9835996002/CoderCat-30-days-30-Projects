@@ -12,6 +12,7 @@
 </p>
 
 ---
+<p align="center"><i>focus > learn > build > secure > repeat</i></p>
 <p align="center">
   <img src="32a12aa2-3fce-43ef-923d-feccde544b6f.png" width="420" alt="Deep Dive Dev Cat"/>
 </p>
