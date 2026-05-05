@@ -1,7 +1,4 @@
-# CoderCat-30-days-30-Projects
-Can't get hired without projects. Here are 30. Built live, open source, free to fork.
-
-<h1 align="center">🐱 30 Days. 30 Projects.</h1>
+<h1 align="center">( o.o )   30 Days. 30 Projects.</h1>
 
 <p align="center">
   <b>If you want to get hired — follow this repo as I build it.</b>
@@ -9,12 +6,16 @@ Can't get hired without projects. Here are 30. Built live, open source, free to 
 
 <p align="center">
   <img src="https://img.shields.io/badge/Day-1%20of%2030-blueviolet?style=flat-square" />
-  <img src="https://img.shields.io/badge/Stack-Python%20%7C%20Cybersecurity%20%7C%20Web%20Dev-informational?style=flat-square" />
+  <img src="https://img.shields.io/badge/Stack-Python%20%7C%20Cybersecurity%20%7C%20Web%20Dev%20%7C%20Java-informational?style=flat-square" />
   <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square" />
   <img src="https://img.shields.io/badge/Builder-CoderCat-orange?style=flat-square" />
 </p>
 
 ---
+<p align="center">
+  <img src="./assets/dev-cat.gif" width="420" alt="Deep Dive Dev Cat"/>
+</p>
+
 
 # If you want to get hired, stop just studying. Start building.
 
@@ -22,7 +23,7 @@ Every recruiter says the same thing — *"show me what you've built."*
 
 Most CS students have nothing to show.
 
-This repo fixes that. I'm building 30 real projects in 30 days — Python, Cybersecurity, Web Dev — completely in public. Every line of code is here. Every project is yours to learn from, fork, and use.
+This repo fixes that. I'm building 30 real projects in 30 days — Python, Cybersecurity, Web Dev, Java — completely in public. Every line of code is here. Every project is yours to learn from, fork, and use.
 
 Follow along. Build with me. Show up to your next interview with something real.
 
@@ -35,6 +36,7 @@ Follow along. Build with me. Show up to your next interview with something real.
 | 🐍 Python | Python Dev · Backend Dev · Automation Engineer |
 | 🔐 Cybersecurity | Pentester · Security Analyst · Bug Bounty Hunter |
 | 🌐 Web Dev | Frontend Dev · Full Stack Dev · Freelancer |
+| ☕ Java | Java Developer · Backend Engineer · Android Developer |
 
 ---
 
@@ -45,6 +47,8 @@ Follow along. Build with me. Show up to your next interview with something real.
 **Cybersecurity** — Burp Suite, OWASP tools, Nmap, Shodan API
 
 **Web Dev** — HTML/CSS/JS, React, Tailwind CSS
+
+**Java** — Java 17+, Spring Boot, Maven
 
 ---
 
