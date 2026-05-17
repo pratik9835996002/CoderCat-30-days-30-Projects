@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Safety Checker</title>
+    <style>
+        :root {
+            --bg: #0d0d0d;
+            --card: #1a1a1a;
+            --border: #2b2b2b;
+            --text: #f5f5f5;
+            --muted: #a8a8a8;
+            --safe: #00ff88;
+            --danger: #ff4444;
+            --warning: #ffaa00;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .page {
+            width: min(100%, 760px);
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 32px;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: clamp(28px, 5vw, 44px);
+            line-height: 1.05;
+            letter-spacing: 0;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .form {
+            display: grid;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+        }
+
+        input[type="url"] {
+            width: 100%;
+            min-height: 50px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: #101010;
+            color: var(--text);
+            font-size: 16px;
+            padding: 0 16px;
+            outline: none;
+        }
+
+        input[type="url"]:focus {
+            border-color: var(--safe);
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.14);
+        }
+
+        button,
+        .button {
+            min-height: 50px;
+            border: 0;
+            border-radius: 6px;
+            background: var(--safe);
+            color: #06140d;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 0 20px;
+            text-decoration: none;
+            transition: transform 160ms ease, opacity 160ms ease;
+            white-space: nowrap;
+        }
+
+        button:hover,
+        .button:hover {
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            cursor: wait;
+            opacity: 0.72;
+            transform: none;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(6, 20, 13, 0.28);
+            border-top-color: #06140d;
+            border-radius: 50%;
+            display: none;
+            margin-right: 8px;
+            animation: spin 800ms linear infinite;
+        }
+
+        .is-loading .spinner {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .message {
+            border-radius: 6px;
+            margin: 18px 0;
+            padding: 14px 16px;
+            line-height: 1.5;
+        }
+
+        .message.error {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255, 68, 68, 0.35);
+            color: #ffb8b8;
+        }
+
+        .result {
+            border-top: 1px solid var(--border);
+            margin-top: 24px;
+            padding-top: 28px;
+        }
+
+        .verdict {
+            text-align: center;
+            margin-bottom: 26px;
+        }
+
+        .verdict-label {
+            display: block;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .verdict-value {
+            display: block;
+            font-size: clamp(42px, 12vw, 72px);
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: 0;
+        }
+
+        .verdict-value.safe {
+            color: var(--safe);
+        }
+
+        .verdict-value.danger {
+            color: var(--danger);
+        }
+
+        .verdict-value.warning {
+            color: var(--warning);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 22px 0;
+        }
+
+        .stat {
+            background: #111;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 14px;
+            min-width: 0;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 24px;
+            line-height: 1.1;
+            margin-bottom: 6px;
+        }
+
+        .stat span {
+            color: var(--muted);
+            display: block;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .scan-summary {
+            color: var(--text);
+            font-size: 18px;
+            margin: 0 0 12px;
+            text-align: center;
+        }
+
+        .progress-track {
+            height: 14px;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #0b0b0b;
+            border: 1px solid var(--border);
+            display: flex;
+        }
+
+        .progress-danger {
+            background: var(--danger);
+        }
+
+        .progress-clean {
+            background: var(--safe);
+            flex: 1;
+        }
+
+        .details {
+            display: grid;
+            gap: 18px;
+            margin-top: 24px;
+        }
+
+        .detail-block {
+            background: #111;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 18px;
+        }
+
+        .detail-title {
+            color: var(--muted);
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .checked-url {
+            margin: 0;
+            overflow-wrap: anywhere;
+            line-height: 1.5;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            border: 1px solid rgba(255, 170, 0, 0.35);
+            border-radius: 999px;
+            color: var(--warning);
+            padding: 6px 10px;
+            font-size: 13px;
+            background: rgba(255, 170, 0, 0.08);
+        }
+
+        .muted {
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                align-items: flex-start;
+                padding: 16px;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .input-row,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            button,
+            .button {
+                width: 100%;
+            }
+
+            .actions {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="card">
+            <div class="header">
+                <h1>URL Safety Checker</h1>
+                <p class="subtitle">Scan a link with VirusTotal and review the detection verdict.</p>
+            </div>
+
+            {% if not result %}
+                <form class="form" method="post" id="check-form">
+                    <div class="input-row">
+                        <input
+                            type="url"
+                            name="url"
+                            placeholder="https://example.com"
+                            value="{{ submitted_url }}"
+                            required
+                        >
+                        <button type="submit" id="submit-button">
+                            <span class="spinner" aria-hidden="true"></span>
+                            <span class="button-text">Check URL</span>
+                        </button>
+                    </div>
+                </form>
+            {% endif %}
+
+            {% if error %}
+                <div class="message error">{{ error }}</div>
+            {% endif %}
+
+            {% if result %}
+                <section class="result">
+                    <div class="verdict">
+                        <span class="verdict-label">Verdict</span>
+                        <span class="verdict-value {{ result.verdict_class }}">{{ result.verdict }}</span>
+                    </div>
+
+                    <p class="scan-summary">
+                        {{ result.flagged_engines }} of {{ result.total_engines }} engines flagged this URL.
+                    </p>
+
+                    <div class="progress-track" aria-label="Malicious versus clean ratio">
+                        <div
+                            class="progress-danger"
+                            data-width="{{ result.malicious_ratio }}"
+                            title="{{ result.malicious_ratio }}% flagged"
+                        ></div>
+                        <div
+                            class="progress-clean"
+                            data-width="{{ result.clean_ratio }}"
+                            title="{{ result.clean_ratio }}% clean or undetected"
+                        ></div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat">
+                            <strong style="color: var(--danger);">{{ result.malicious }}</strong>
+                            <span>Malicious</span>
+                        </div>
+                        <div class="stat">
+                            <strong style="color: var(--warning);">{{ result.suspicious }}</strong>
+                            <span>Suspicious</span>
+                        </div>
+                        <div class="stat">
+                            <strong style="color: var(--safe);">{{ result.harmless }}</strong>
+                            <span>Harmless</span>
+                        </div>
+                        <div class="stat">
+                            <strong>{{ result.undetected }}</strong>
+                            <span>Undetected</span>
+                        </div>
+                    </div>
+
+                    <div class="details">
+                        <div class="detail-block">
+                            <span class="detail-title">Checked URL</span>
+                            <p class="checked-url">{{ result.url }}</p>
+                        </div>
+
+                        <div class="detail-block">
+                            <span class="detail-title">Detected Categories</span>
+                            {% if result.categories %}
+                                <div class="tags">
+                                    {% for category in result.categories %}
+                                        <span class="tag">{{ category }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="muted">No phishing, malware, or suspicious categories were reported.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <a class="button" href="/">Check another URL</a>
+                    </div>
+                </section>
+            {% endif %}
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById("check-form");
+        const submitButton = document.getElementById("submit-button");
+        const buttonText = submitButton ? submitButton.querySelector(".button-text") : null;
+
+        if (form && submitButton && buttonText) {
+            form.addEventListener("submit", () => {
+                submitButton.disabled = true;
+                submitButton.classList.add("is-loading");
+                buttonText.textContent = "Checking...";
+            });
+        }
+    </script>
+</body>
+</html>
